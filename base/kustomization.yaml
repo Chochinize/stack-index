@@ -9,4 +9,4 @@ resources:
 # CI rewrites `newTag` to the built commit SHA (see .github/workflows/build.yml).
 images:
   - name: chochinize/stack-index
-    newTag: latest
+    newTag: 72eba48ad67db4d778e2cd4afe739a747c8370b2
