@@ -14,6 +14,10 @@ spec:
       labels:
         app: stack-index
     spec:
+      # CI builds an amd64-only image (no cross-build actions available), so keep the
+      # pods on amd64 nodes (the cluster also has arm Pi nodes).
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
         - name: web
           image: chochinize/stack-index:latest
