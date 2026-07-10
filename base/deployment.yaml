@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stack-index
+  labels:
+    app: stack-index
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stack-index
+  template:
+    metadata:
+      labels:
+        app: stack-index
+    spec:
+      containers:
+        - name: web
+          image: chochinize/stack-index:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 10m
+              memory: 24Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi

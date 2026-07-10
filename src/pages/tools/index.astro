@@ -1,0 +1,109 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import { SITE } from '../../lib/site';
+import { CATEGORIES } from '../../lib/categories';
+import { sortTools } from '../../lib/tools';
+
+const tools = sortTools(await getCollection('tools'));
+
+const title = 'All tools';
+const description = `Browse all ${tools.length} local-first and self-hosted tools in the index. Filter by model, category, and search by name, tag, or the SaaS it replaces.`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `All tools · ${SITE.name}`,
+  description,
+  url: `${SITE.url}/tools`,
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: tools.length,
+    itemListElement: tools.map((t, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE.url}/tools/${t.id}`,
+      name: t.data.name,
+    })),
+  },
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <section class="section container">
+    <p class="eyebrow">The index</p>
+    <h1>All tools</h1>
+    <p class="muted" style="max-width:60ch;margin-top:.5rem">{tools.length} curated local-first and self-hosted tools. Search and filter to find what replaces the cloud service you're trying to leave.</p>
+
+    <div class="search" style="margin-top:1.5rem;margin-inline:0">
+      <span class="search-ico" aria-hidden="true">⌕</span>
+      <input type="search" id="q" placeholder="Search by name, tag, or “alternative to…”" aria-label="Search tools" autocomplete="off" />
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter by model">
+      <button class="chip" data-model="" aria-pressed="true">All</button>
+      <button class="chip" data-model="local-first" aria-pressed="false">Local-first</button>
+      <button class="chip" data-model="self-hosted" aria-pressed="false">Self-hosted</button>
+      <select id="cat" class="chip" aria-label="Filter by category" style="cursor:pointer">
+        <option value="">All categories</option>
+        {CATEGORIES.map((c) => <option value={c.slug}>{c.name}</option>)}
+      </select>
+      <span class="result-count" id="count" style="margin-left:auto"></span>
+    </div>
+
+    <div class="grid cols-3" id="grid" style="margin-top:1.5rem">
+      {tools.map((entry) => <ToolCard entry={entry} />)}
+    </div>
+    <p class="empty" id="empty" hidden>No tools match — try a different search or clear the filters.</p>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var q = document.getElementById('q');
+      var cat = document.getElementById('cat');
+      var count = document.getElementById('count');
+      var empty = document.getElementById('empty');
+      var chips = Array.prototype.slice.call(document.querySelectorAll('.chip[data-model]'));
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.js-tool'));
+      var model = '';
+
+      function apply() {
+        var term = (q.value || '').trim().toLowerCase();
+        var c = cat.value;
+        var shown = 0;
+        cards.forEach(function (el) {
+          var okTerm = !term || el.dataset.haystack.indexOf(term) !== -1;
+          var okModel = !model || (' ' + el.dataset.models + ' ').indexOf(' ' + model + ' ') !== -1;
+          var okCat = !c || el.dataset.cat === c;
+          var show = okTerm && okModel && okCat;
+          el.hidden = !show;
+          if (show) shown++;
+        });
+        count.textContent = shown + (shown === 1 ? ' tool' : ' tools');
+        empty.hidden = shown !== 0;
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          model = chip.dataset.model;
+          chips.forEach(function (c2) { c2.setAttribute('aria-pressed', String(c2 === chip)); });
+          apply();
+        });
+      });
+      q.addEventListener('input', apply);
+      cat.addEventListener('change', apply);
+
+      // Seed from URL (?q=, ?model=, ?cat=)
+      var params = new URLSearchParams(location.search);
+      if (params.get('q')) q.value = params.get('q');
+      if (params.get('cat')) cat.value = params.get('cat');
+      var m = params.get('model');
+      if (m) {
+        model = m;
+        chips.forEach(function (c2) { c2.setAttribute('aria-pressed', String(c2.dataset.model === m)); });
+      }
+      apply();
+    })();
+  </script>
+</BaseLayout>

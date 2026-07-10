@@ -1,0 +1,11 @@
+node_modules
+dist
+.astro
+.git
+.gitignore
+*.log
+.DS_Store
+.vscode
+README.md
+k8s
+.github

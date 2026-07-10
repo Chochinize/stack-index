@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = 'What the Stack Index is, what "local-first" and "self-hosted" mean, and how tools are chosen for the directory.';
+---
+
+<BaseLayout title="About" description={description}>
+  <section class="section container">
+    <div class="prose">
+      <p class="eyebrow">About</p>
+      <h1>Why this index exists</h1>
+      <p>The Stack Index is a curated directory of <strong>local-first</strong> and <strong>self-hosted</strong> software — tools that let you keep your data on your own devices and servers instead of renting access to it from someone else's cloud.</p>
+
+      <h2>Local-first vs. self-hosted</h2>
+      <p><strong>Local-first</strong> software treats your device as the source of truth. It works offline, stores data in open formats you control, and syncs on your terms — so an app can shut down and your data still lives on your disk.</p>
+      <p><strong>Self-hosted</strong> software runs on hardware you operate — a home server, a VPS, a Raspberry Pi. The service is yours: your files, your accounts, your logs, no third party in the middle.</p>
+      <p>Many of the best tools are both. We tag each entry so you can filter by what matters to you.</p>
+
+      <h2>How tools are chosen</h2>
+      <p>Every listing has to earn its place. We look for tools that:</p>
+      <ul>
+        <li>Genuinely keep your data local or on infrastructure you control.</li>
+        <li>Are actively maintained and real (not abandonware).</li>
+        <li>Use open or portable data formats — no silent lock-in.</li>
+        <li>Have a clear license (we note when something is source-available rather than open source).</li>
+      </ul>
+      <blockquote>Own your data. Run it yourself. Keep it offline.</blockquote>
+
+      <h2>Contributing</h2>
+      <p>Know a tool that belongs here — or spot something out of date? The index is community-curated. Head to the <a href="/submit">submit page</a> to add or fix an entry.</p>
+    </div>
+  </section>
+</BaseLayout>

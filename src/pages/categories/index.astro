@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../lib/site';
+import { CATEGORIES } from '../../lib/categories';
+import { countByCategory } from '../../lib/tools';
+
+const counts = countByCategory(await getCollection('tools'));
+const cats = CATEGORIES.map((c) => ({ ...c, count: counts.get(c.slug) ?? 0 }));
+
+const description = 'Browse local-first and self-hosted software by category — notes, files & backup, photos, passwords, home automation, finance, and the infrastructure that runs it all.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Categories · ${SITE.name}`,
+  description,
+  url: `${SITE.url}/categories`,
+};
+---
+
+<BaseLayout title="Categories" description={description} jsonLd={jsonLd}>
+  <section class="section container">
+    <p class="eyebrow">Browse</p>
+    <h1>Categories</h1>
+    <p class="muted" style="max-width:60ch;margin-top:.5rem">Every corner of a self-owned software stack, from the notes you write to the servers that run it.</p>
+
+    <div class="grid cols-cat" style="margin-top:1.75rem">
+      {cats.map((c) => (
+        <a class="cat-card" href={`/categories/${c.slug}`}>
+          <span class="ico" aria-hidden="true">{c.icon}</span>
+          <h3>{c.name}</h3>
+          <p class="muted" style="font-size:.88rem">{c.blurb}</p>
+          <span class="count">{c.count} {c.count === 1 ? 'tool' : 'tools'}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

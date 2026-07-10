@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" noindex={true}>
+  <section class="section container" style="text-align:center;padding-block:5rem">
+    <p class="eyebrow">404</p>
+    <h1 style="font-size:clamp(2rem,6vw,3rem)">This page went self-hosted</h1>
+    <p class="muted" style="max-width:44ch;margin:1rem auto 0">We couldn't find that one. It may have moved, or never existed.</p>
+    <div class="cta-row" style="margin-top:1.75rem">
+      <a class="btn btn-primary" href="/">Back home</a>
+      <a class="btn btn-ghost" href="/tools">Browse all tools</a>
+    </div>
+  </section>
+</BaseLayout>

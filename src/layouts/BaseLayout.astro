@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
+import { SITE, NAV } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  ogType?: string;
+  noindex?: boolean;
+  jsonLd?: object | object[];
+}
+const { title, description, image, ogType, noindex, jsonLd } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead {title} {description} {image} {ogType} {noindex} {jsonLd} />
+  </head>
+  <body>
+    <a href="#main" class="btn btn-ghost" style="position:absolute;left:-9999px;top:0;" onfocus="this.style.left='8px';this.style.top='8px';this.style.zIndex='100'" onblur="this.style.left='-9999px'">Skip to content</a>
+    <header class="site-header">
+      <div class="container bar">
+        <a href="/" class="brand"><span class="mark">◧</span>{SITE.name}</a>
+        <nav class="nav" id="nav">
+          {NAV.map((n) => (
+            <a href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
+          ))}
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+            <span aria-hidden="true">◐</span>
+          </button>
+        </nav>
+        <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      </div>
+    </header>
+
+    <main id="main"><slot /></main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="cols">
+          <div style="max-width:34ch">
+            <a href="/" class="brand" style="margin-bottom:.5rem"><span class="mark">◧</span>{SITE.name}</a>
+            <p class="small">{SITE.tagline} Own your data, run it yourself, keep it offline.</p>
+          </div>
+          <div>
+            <p class="eyebrow" style="margin-bottom:.6rem">Browse</p>
+            <ul class="stack" style="--stack:.4rem">
+              <li><a href="/tools">All tools</a></li>
+              <li><a href="/categories">Categories</a></li>
+              <li><a href="/submit">Submit a tool</a></li>
+              <li><a href="/rss.xml">RSS feed</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow" style="margin-bottom:.6rem">About</p>
+            <ul class="stack" style="--stack:.4rem">
+              <li><a href="/about">What is this?</a></li>
+              <li><a href={SITE.social.github} rel="noopener">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="small" style="margin-top:2rem">© {year} {SITE.name}. A community-curated index — contributions welcome.</p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      // Theme toggle
+      var tt = document.getElementById('theme-toggle');
+      if (tt) tt.addEventListener('click', function () {
+        var cur = document.documentElement.getAttribute('data-theme');
+        var isDark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+      // Mobile nav
+      var nt = document.getElementById('nav-toggle');
+      var nav = document.getElementById('nav');
+      if (nt && nav) nt.addEventListener('click', function () {
+        var open = nav.getAttribute('data-open') === 'true';
+        nav.setAttribute('data-open', String(!open));
+        nt.setAttribute('aria-expanded', String(!open));
+      });
+    </script>
+  </body>
+</html>

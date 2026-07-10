@@ -1,0 +1,130 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import { SITE } from '../../lib/site';
+import { getCategory, categoryName } from '../../lib/categories';
+import { initial, avatarStyle, MODEL_LABEL } from '../../lib/tools';
+
+export async function getStaticPaths() {
+  const tools = await getCollection('tools');
+  return tools.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+const cat = getCategory(data.category);
+const all = await getCollection('tools');
+const related = all
+  .filter((t) => t.id !== entry.id && t.data.category === data.category)
+  .slice(0, 3);
+
+function fmtStars(n?: number): string | null {
+  if (!n) return null;
+  return n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n);
+}
+const stars = fmtStars(data.stars);
+const added = data.added.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+const canonical = `${SITE.url}/tools/${entry.id}`;
+const pricingLabel = { free: 'Free', freemium: 'Freemium', paid: 'Paid' }[data.pricing];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: data.name,
+    description: data.description,
+    applicationCategory: cat?.name ?? 'Software',
+    operatingSystem: data.platforms.join(', ') || 'Cross-platform',
+    url: canonical,
+    sameAs: [data.website, data.repo].filter(Boolean),
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: 'Tools', item: `${SITE.url}/tools` },
+      { '@type': 'ListItem', position: 3, name: data.name, item: canonical },
+    ],
+  },
+];
+
+const metaDesc = data.description;
+---
+
+<BaseLayout title={data.name} description={metaDesc} ogType="article" jsonLd={jsonLd}>
+  <article class="section container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span>
+      <a href="/tools">Tools</a> <span>/</span>
+      {cat && <><a href={`/categories/${cat.slug}`}>{cat.name}</a> <span>/</span></>}
+      <span>{data.name}</span>
+    </nav>
+
+    <header class="detail-head" style="margin-top:1.25rem">
+      <span class="avatar" style={avatarStyle(data.name)} aria-hidden="true">{initial(data.name)}</span>
+      <div style="flex:1;min-width:260px">
+        <h1>{data.name}</h1>
+        <p class="muted" style="font-size:1.1rem;margin-top:.35rem">{data.tagline}</p>
+        <div class="meta" style="margin-top:.85rem">
+          {data.models.map((m) => <span class={`badge ${m === 'local-first' ? 'local' : 'selfhost'}`}>{MODEL_LABEL[m]}</span>)}
+          <span class="badge">{data.license}</span>
+          <span class="badge">{pricingLabel}</span>
+        </div>
+        <div class="cta-row" style="justify-content:flex-start;margin-top:1.1rem">
+          <a class="btn btn-primary" href={data.website} rel="noopener nofollow" target="_blank">Visit website ↗</a>
+          {data.repo && <a class="btn btn-ghost" href={data.repo} rel="noopener nofollow" target="_blank">Source code</a>}
+          {data.docs && <a class="btn btn-ghost" href={data.docs} rel="noopener nofollow" target="_blank">Docs</a>}
+        </div>
+      </div>
+    </header>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:2rem;margin-top:2.25rem" data-cols>
+      <div class="prose">
+        {data.alternativeTo.length > 0 && (
+          <p><strong>A self-hosted / local-first alternative to:</strong> {data.alternativeTo.join(', ')}.</p>
+        )}
+        <Content />
+
+        {data.tags.length > 0 && (
+          <div class="meta" style="margin-top:2rem">
+            {data.tags.map((t) => <span class="tag">#{t}</span>)}
+          </div>
+        )}
+      </div>
+
+      <aside class="stack" style="--stack:1rem">
+        <div class="spec">
+          <div><span class="k">Category</span><a class="v" href={`/categories/${data.category}`}>{categoryName(data.category)}</a></div>
+          <div><span class="k">License</span><span class="v">{data.license}</span></div>
+          <div><span class="k">Pricing</span><span class="v">{pricingLabel}</span></div>
+          <div><span class="k">Open source</span><span class="v">{data.openSource ? 'Yes' : 'Source-available'}</span></div>
+          {data.language && <div><span class="k">Language</span><span class="v">{data.language}</span></div>}
+          {stars && <div><span class="k">GitHub stars</span><span class="v">★ {stars}</span></div>}
+          <div><span class="k">Platforms</span><span class="v">{data.platforms.join(', ') || '—'}</span></div>
+          <div><span class="k">Added</span><span class="v">{added}</span></div>
+        </div>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section style="margin-top:3rem">
+        <h2 style="margin-bottom:1.1rem">More {cat?.name ?? 'similar'} tools</h2>
+        <div class="grid cols-3">
+          {related.map((r) => <ToolCard entry={r} />)}
+        </div>
+      </section>
+    )}
+  </article>
+
+  <style>
+    @media (min-width: 900px) {
+      [data-cols] { grid-template-columns: minmax(0, 1fr) 300px !important; align-items: start; }
+      aside .spec { position: sticky; top: 80px; }
+    }
+  </style>
+</BaseLayout>

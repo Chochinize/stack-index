@@ -1,0 +1,35 @@
+---
+import type { Tool } from '../lib/tools';
+import { initial, avatarStyle, MODEL_LABEL } from '../lib/tools';
+
+interface Props {
+  entry: Tool;
+}
+const { entry } = Astro.props;
+const { data, id } = entry;
+// Lowercased haystack for the client-side search filter.
+const haystack = [data.name, data.tagline, ...(data.tags ?? []), ...(data.alternativeTo ?? [])]
+  .join(' ')
+  .toLowerCase();
+---
+
+<a
+  href={`/tools/${id}`}
+  class="card js-tool"
+  data-haystack={haystack}
+  data-cat={data.category}
+  data-models={data.models.join(' ')}
+>
+  <div class="top">
+    <span class="avatar" style={avatarStyle(data.name)} aria-hidden="true">{initial(data.name)}</span>
+    <div>
+      <h3>{data.name}</h3>
+      <p class="muted">{data.tagline}</p>
+    </div>
+  </div>
+  <div class="meta">
+    {data.models.map((m) => <span class={`badge ${m === 'local-first' ? 'local' : 'selfhost'}`}>{MODEL_LABEL[m]}</span>)}
+    <span class="badge">{data.license}</span>
+    {data.alternativeTo.length > 0 && <span class="badge">alt to {data.alternativeTo[0]}</span>}
+  </div>
+</a>

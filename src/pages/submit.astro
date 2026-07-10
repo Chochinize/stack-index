@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+const description = 'Suggest a local-first or self-hosted tool for the Stack Index, or fix an existing entry. Contributions are welcome via GitHub.';
+const template = `---
+name: Tool Name
+tagline: One short line about what it does.
+description: A 1–2 sentence description used for search and SEO.
+category: notes-knowledge   # see src/lib/categories.ts for slugs
+tags: [example, tags]
+models: [local-first]        # local-first and/or self-hosted
+license: MIT
+openSource: true
+pricing: free                # free | freemium | paid
+platforms: [Linux, Web]
+website: https://example.com
+repo: https://github.com/owner/repo
+alternativeTo: [Some SaaS]
+added: 2026-07-10
+---
+
+A couple of short paragraphs about the tool for its detail page.`;
+---
+
+<BaseLayout title="Submit a tool" description={description}>
+  <section class="section container">
+    <div class="prose">
+      <p class="eyebrow">Contribute</p>
+      <h1>Submit a tool</h1>
+      <p>The index is community-curated and lives in an open Git repository. Adding a tool is just adding one Markdown file — no build tooling required to propose it.</p>
+
+      <h2>The quick way</h2>
+      <ul>
+        <li>Open an issue on <a href={SITE.social.github} rel="noopener">GitHub</a> with the tool's name and link, or</li>
+        <li>Open a pull request adding a file to <code>src/content/tools/&lt;slug&gt;.md</code> using the template below.</li>
+      </ul>
+
+      <h2>Entry template</h2>
+      <p>Copy this, fill it in, and drop it in as <code>src/content/tools/your-tool.md</code>:</p>
+      <pre style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:1rem;overflow:auto;font-family:var(--mono);font-size:.82rem;line-height:1.5"><code>{template}</code></pre>
+
+      <h2>What we look for</h2>
+      <ul>
+        <li>Keeps data local or on infrastructure the user controls.</li>
+        <li>Actively maintained, with a clear license.</li>
+        <li>Open or portable data formats.</li>
+      </ul>
+      <p>See the <a href="/about">about page</a> for the full curation criteria.</p>
+    </div>
+  </section>
+</BaseLayout>

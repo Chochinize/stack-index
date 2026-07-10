@@ -1,0 +1,22 @@
+# ArgoCD Application for the Stack Index. Apply once (kubectl apply -f argo-app.yaml)
+# after the repo exists; thereafter Argo auto-syncs the `base/` kustomization on every push.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stack-index
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Chochinize/stack-index.git'
+    targetRevision: HEAD
+    path: base
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: stack-index
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
