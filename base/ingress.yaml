@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stack-index
+  namespace: stack-index
+  annotations:
+    # TLS via cert-manager DNS-01 (same issuer the other sites use). Requires the
+    # Cloudflare API token to have access to the localfirststack.com zone.
+    cert-manager.io/cluster-issuer: letsencrypt-dns01
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localfirststack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stack-index
+                port:
+                  number: 80
+    - host: www.localfirststack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stack-index
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - localfirststack.com
+        - www.localfirststack.com
+      secretName: stack-index-tls

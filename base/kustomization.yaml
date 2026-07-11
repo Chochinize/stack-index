@@ -5,6 +5,7 @@ namespace: stack-index
 resources:
   - deployment.yaml
   - service.yaml
+  - ingress.yaml
 
 # CI rewrites `newTag` to the built commit SHA (see .github/workflows/build.yml).
 images:
