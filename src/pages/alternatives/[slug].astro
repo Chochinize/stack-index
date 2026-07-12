@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import { SITE } from '../../lib/site';
+import { buildAlternatives } from '../../lib/alternatives';
+import { categoryName } from '../../lib/categories';
+import { sortTools, MODEL_LABEL } from '../../lib/tools';
+
+export async function getStaticPaths() {
+  const tools = await getCollection('tools');
+  return buildAlternatives(tools).map((group) => ({
+    params: { slug: group.slug },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props;
+const tools = sortTools(group.tools);
+const n = tools.length;
+
+// Signals that vary per page (keeps these programmatic pages from reading identically).
+const models = [...new Set(tools.flatMap((t) => t.data.models))].map((m) => MODEL_LABEL[m]);
+const cats = [...new Set(tools.map((t) => categoryName(t.data.category)))];
+const openCount = tools.filter((t) => t.data.openSource).length;
+
+const title = `Self-hosted alternatives to ${group.name}`;
+const description = `${n} local-first and self-hosted alternatives to ${group.name} — replace it with open software you run yourself, keeping your data on your own devices. ${tools.map((t) => t.data.name).join(', ')}.`;
+const canonical = `${SITE.url}/alternatives/${group.slug}`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${title} · ${SITE.name}`,
+    description,
+    url: canonical,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: n,
+      itemListElement: tools.map((t, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE.url}/tools/${t.id}`,
+        name: t.data.name,
+      })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: 'Alternatives', item: `${SITE.url}/alternatives` },
+      { '@type': 'ListItem', position: 3, name: group.name, item: canonical },
+    ],
+  },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <section class="section container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a> <span>/</span>
+      <a href="/alternatives">Alternatives</a> <span>/</span>
+      <span>{group.name}</span>
+    </nav>
+
+    <p class="eyebrow" style="margin-top:1.25rem">Alternatives</p>
+    <h1>Self-hosted alternatives to {group.name}</h1>
+    <p class="lead" style="text-align:left;max-width:60ch;margin-top:1rem">
+      {n} {n === 1 ? 'tool' : 'tools'} in this index can replace {group.name} — {models.join(' or ').toLowerCase()},
+      spanning {cats.join(', ').toLowerCase()}. Each keeps your data on hardware you control instead of a vendor's cloud,
+      and {openCount} of {n} are fully open source.
+    </p>
+
+    <div class="grid cols-3" style="margin-top:1.75rem">
+      {tools.map((entry) => <ToolCard entry={entry} />)}
+    </div>
+
+    <div class="prose" style="margin-top:3rem">
+      <h2>Why replace {group.name} with a self-hosted option?</h2>
+      <ul>
+        <li><strong>Own your data.</strong> It lives on your device or server — not a third party's account you can be locked out of.</li>
+        <li><strong>No subscription creep.</strong> These tools are free or one-time; you provide the hardware.</li>
+        <li><strong>Privacy by default.</strong> Nothing is mined, profiled, or sold; what you store stays yours.</li>
+        <li><strong>Portability.</strong> Open or documented formats mean you're never trapped by a single vendor.</li>
+      </ul>
+      <p>Browse the full <a href="/tools">directory</a> or explore more <a href="/alternatives">alternatives</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

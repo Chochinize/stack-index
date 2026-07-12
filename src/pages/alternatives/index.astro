@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../lib/site';
+import { buildAlternatives } from '../../lib/alternatives';
+
+const groups = buildAlternatives(await getCollection('tools'));
+
+const description = 'Self-hosted and local-first alternatives to popular SaaS — replace Google Photos, Dropbox, Slack, Jira, Notion, 1Password and more with software you run yourself.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Alternatives · ${SITE.name}`,
+  description,
+  url: `${SITE.url}/alternatives`,
+};
+---
+
+<BaseLayout title="Self-hosted alternatives to popular apps" description={description} jsonLd={jsonLd}>
+  <section class="section container">
+    <p class="eyebrow">Alternatives</p>
+    <h1>Ditch the SaaS</h1>
+    <p class="muted" style="max-width:62ch;margin-top:.5rem">
+      Pick the cloud app you want to leave — each page lists the local-first and self-hosted tools that replace it,
+      so you can move off it and keep your data.
+    </p>
+
+    <div class="grid cols-cat" style="margin-top:1.75rem">
+      {groups.map((g) => (
+        <a class="cat-card" href={`/alternatives/${g.slug}`}>
+          <h3>Alternatives to {g.name}</h3>
+          <span class="count">{g.tools.length} {g.tools.length === 1 ? 'tool' : 'tools'}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

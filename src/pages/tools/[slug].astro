@@ -5,6 +5,7 @@ import ToolCard from '../../components/ToolCard.astro';
 import { SITE } from '../../lib/site';
 import { getCategory, categoryName } from '../../lib/categories';
 import { initial, avatarStyle, MODEL_LABEL } from '../../lib/tools';
+import { alternativeSlugSet, slugifySaas } from '../../lib/alternatives';
 
 export async function getStaticPaths() {
   const tools = await getCollection('tools');
@@ -20,6 +21,7 @@ const all = await getCollection('tools');
 const related = all
   .filter((t) => t.id !== entry.id && t.data.category === data.category)
   .slice(0, 3);
+const altSlugs = alternativeSlugSet(all);
 
 function fmtStars(n?: number): string | null {
   if (!n) return null;
@@ -86,7 +88,14 @@ const metaDesc = data.description;
     <div style="display:grid;grid-template-columns:1fr;gap:2rem;margin-top:2.25rem" data-cols>
       <div class="prose">
         {data.alternativeTo.length > 0 && (
-          <p><strong>A self-hosted / local-first alternative to:</strong> {data.alternativeTo.join(', ')}.</p>
+          <p><strong>A self-hosted / local-first alternative to:</strong>{' '}
+            {data.alternativeTo.map((saas, i) => {
+              const s = slugifySaas(saas);
+              return (
+                <>{i > 0 ? ', ' : ''}{altSlugs.has(s) ? <a href={`/alternatives/${s}`}>{saas}</a> : <span>{saas}</span>}</>
+              );
+            })}.
+          </p>
         )}
         <Content />
 
