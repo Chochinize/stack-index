@@ -9,11 +9,20 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-dns01
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/preserve-trailing-slash: "true"
-    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
 spec:
   ingressClassName: nginx
   rules:
     - host: localfirststack.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stack-index
+                port:
+                  number: 80
+    - host: www.localfirststack.com
       http:
         paths:
           - path: /
