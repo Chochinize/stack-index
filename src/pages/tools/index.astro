@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalUrl } from '../../lib/site';
 import { CATEGORIES } from '../../lib/categories';
 import { sortTools } from '../../lib/tools';
 
@@ -16,14 +16,14 @@ const jsonLd = {
   '@type': 'CollectionPage',
   name: `All tools · ${SITE.name}`,
   description,
-  url: `${SITE.url}/tools`,
+  url: canonicalUrl('/tools'),
   mainEntity: {
     '@type': 'ItemList',
     numberOfItems: tools.length,
     itemListElement: tools.map((t, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `${SITE.url}/tools/${t.id}`,
+      url: canonicalUrl(`/tools/${t.id}`),
       name: t.data.name,
     })),
   },

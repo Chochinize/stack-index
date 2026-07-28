@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../lib/site';
+import { SITE, canonicalUrl } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -20,7 +20,7 @@ const {
 } = Astro.props;
 
 const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.title}`;
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE.url).href;
+const canonical = canonicalUrl(Astro.url.pathname);
 const ogImage = new URL(image, SITE.url).href;
 const blocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---

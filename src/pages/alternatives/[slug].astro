@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalUrl } from '../../lib/site';
 import { buildAlternatives } from '../../lib/alternatives';
 import { categoryName } from '../../lib/categories';
 import { sortTools, MODEL_LABEL } from '../../lib/tools';
@@ -26,7 +26,7 @@ const openCount = tools.filter((t) => t.data.openSource).length;
 
 const title = `Self-hosted alternatives to ${group.name}`;
 const description = `${n} local-first and self-hosted alternatives to ${group.name} — replace it with open software you run yourself, keeping your data on your own devices. ${tools.map((t) => t.data.name).join(', ')}.`;
-const canonical = `${SITE.url}/alternatives/${group.slug}`;
+const canonical = canonicalUrl(`/alternatives/${group.slug}`);
 
 const jsonLd = [
   {
@@ -41,7 +41,7 @@ const jsonLd = [
       itemListElement: tools.map((t, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `${SITE.url}/tools/${t.id}`,
+        url: canonicalUrl(`/tools/${t.id}`),
         name: t.data.name,
       })),
     },
@@ -50,8 +50,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Alternatives', item: `${SITE.url}/alternatives` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: canonicalUrl() },
+      { '@type': 'ListItem', position: 2, name: 'Alternatives', item: canonicalUrl('/alternatives') },
       { '@type': 'ListItem', position: 3, name: group.name, item: canonical },
     ],
   },
@@ -62,7 +62,7 @@ const jsonLd = [
   <section class="section container">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="/">Home</a> <span>/</span>
-      <a href="/alternatives">Alternatives</a> <span>/</span>
+      <a href="/alternatives/">Alternatives</a> <span>/</span>
       <span>{group.name}</span>
     </nav>
 
@@ -86,7 +86,7 @@ const jsonLd = [
         <li><strong>Privacy by default.</strong> Nothing is mined, profiled, or sold; what you store stays yours.</li>
         <li><strong>Portability.</strong> Open or documented formats mean you're never trapped by a single vendor.</li>
       </ul>
-      <p>Browse the full <a href="/tools">directory</a> or explore more <a href="/alternatives">alternatives</a>.</p>
+      <p>Browse the full <a href="/tools/">directory</a> or explore more <a href="/alternatives/">alternatives</a>.</p>
     </div>
   </section>
 </BaseLayout>

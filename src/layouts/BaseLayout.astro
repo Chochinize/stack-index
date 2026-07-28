@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import BaseHead from '../components/BaseHead.astro';
-import { SITE, NAV } from '../lib/site';
+import { SITE, NAV, canonicalPath } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -12,7 +12,7 @@ interface Props {
   jsonLd?: object | object[];
 }
 const { title, description, image, ogType, noindex, jsonLd } = Astro.props;
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const path = canonicalPath(Astro.url.pathname);
 const year = new Date().getFullYear();
 ---
 
@@ -50,16 +50,16 @@ const year = new Date().getFullYear();
           <div>
             <p class="eyebrow" style="margin-bottom:.6rem">Browse</p>
             <ul class="stack" style="--stack:.4rem">
-              <li><a href="/tools">All tools</a></li>
-              <li><a href="/categories">Categories</a></li>
-              <li><a href="/submit">Submit a tool</a></li>
+              <li><a href="/tools/">All tools</a></li>
+              <li><a href="/categories/">Categories</a></li>
+              <li><a href="/submit/">Submit a tool</a></li>
               <li><a href="/rss.xml">RSS feed</a></li>
             </ul>
           </div>
           <div>
             <p class="eyebrow" style="margin-bottom:.6rem">About</p>
             <ul class="stack" style="--stack:.4rem">
-              <li><a href="/about">What is this?</a></li>
+              <li><a href="/about/">What is this?</a></li>
               <li><a href={SITE.social.github} rel="noopener">GitHub</a></li>
             </ul>
           </div>

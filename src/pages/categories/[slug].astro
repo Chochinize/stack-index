@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalUrl } from '../../lib/site';
 import { CATEGORIES } from '../../lib/categories';
 import { sortTools } from '../../lib/tools';
 
@@ -14,7 +14,7 @@ const { category } = Astro.props;
 const tools = sortTools((await getCollection('tools')).filter((t) => t.data.category === category.slug));
 
 const description = category.intro;
-const canonical = `${SITE.url}/categories/${category.slug}`;
+const canonical = canonicalUrl(`/categories/${category.slug}`);
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -28,7 +28,7 @@ const jsonLd = [
       itemListElement: tools.map((t, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `${SITE.url}/tools/${t.id}`,
+        url: canonicalUrl(`/tools/${t.id}`),
         name: t.data.name,
       })),
     },
@@ -37,8 +37,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Categories', item: `${SITE.url}/categories` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: canonicalUrl() },
+      { '@type': 'ListItem', position: 2, name: 'Categories', item: canonicalUrl('/categories') },
       { '@type': 'ListItem', position: 3, name: category.name, item: canonical },
     ],
   },
@@ -49,7 +49,7 @@ const jsonLd = [
   <section class="section container">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="/">Home</a> <span>/</span>
-      <a href="/categories">Categories</a> <span>/</span>
+      <a href="/categories/">Categories</a> <span>/</span>
       <span>{category.name}</span>
     </nav>
 

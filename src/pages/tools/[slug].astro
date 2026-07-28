@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalPath, canonicalUrl } from '../../lib/site';
 import { getCategory, categoryName } from '../../lib/categories';
 import { initial, avatarStyle, MODEL_LABEL } from '../../lib/tools';
 import { alternativeSlugSet, slugifySaas } from '../../lib/alternatives';
@@ -29,7 +29,7 @@ function fmtStars(n?: number): string | null {
 }
 const stars = fmtStars(data.stars);
 const added = data.added.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-const canonical = `${SITE.url}/tools/${entry.id}`;
+const canonical = canonicalUrl(`/tools/${entry.id}`);
 const pricingLabel = { free: 'Free', freemium: 'Freemium', paid: 'Paid' }[data.pricing];
 
 const jsonLd = [
@@ -48,8 +48,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Tools', item: `${SITE.url}/tools` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: canonicalUrl() },
+      { '@type': 'ListItem', position: 2, name: 'Tools', item: canonicalUrl('/tools') },
       { '@type': 'ListItem', position: 3, name: data.name, item: canonical },
     ],
   },
@@ -62,8 +62,8 @@ const metaDesc = data.description;
   <article class="section container">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="/">Home</a> <span>/</span>
-      <a href="/tools">Tools</a> <span>/</span>
-      {cat && <><a href={`/categories/${cat.slug}`}>{cat.name}</a> <span>/</span></>}
+      <a href="/tools/">Tools</a> <span>/</span>
+      {cat && <><a href={canonicalPath(`/categories/${cat.slug}`)}>{cat.name}</a> <span>/</span></>}
       <span>{data.name}</span>
     </nav>
 
@@ -92,7 +92,7 @@ const metaDesc = data.description;
             {data.alternativeTo.map((saas, i) => {
               const s = slugifySaas(saas);
               return (
-                <>{i > 0 ? ', ' : ''}{altSlugs.has(s) ? <a href={`/alternatives/${s}`}>{saas}</a> : <span>{saas}</span>}</>
+                <>{i > 0 ? ', ' : ''}{altSlugs.has(s) ? <a href={canonicalPath(`/alternatives/${s}`)}>{saas}</a> : <span>{saas}</span>}</>
               );
             })}.
           </p>
@@ -108,7 +108,7 @@ const metaDesc = data.description;
 
       <aside class="stack" style="--stack:1rem">
         <div class="spec">
-          <div><span class="k">Category</span><a class="v" href={`/categories/${data.category}`}>{categoryName(data.category)}</a></div>
+          <div><span class="k">Category</span><a class="v" href={canonicalPath(`/categories/${data.category}`)}>{categoryName(data.category)}</a></div>
           <div><span class="k">License</span><span class="v">{data.license}</span></div>
           <div><span class="k">Pricing</span><span class="v">{pricingLabel}</span></div>
           <div><span class="k">Open source</span><span class="v">{data.openSource ? 'Yes' : 'Source-available'}</span></div>

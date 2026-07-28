@@ -1,6 +1,7 @@
 ---
 import type { Tool } from '../lib/tools';
 import { initial, avatarStyle, MODEL_LABEL } from '../lib/tools';
+import { canonicalPath } from '../lib/site';
 
 interface Props {
   entry: Tool;
@@ -14,7 +15,7 @@ const haystack = [data.name, data.tagline, ...(data.tags ?? []), ...(data.altern
 ---
 
 <a
-  href={`/tools/${id}`}
+  href={canonicalPath(`/tools/${id}`)}
   class="card js-tool"
   data-haystack={haystack}
   data-cat={data.category}

@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolCard from '../components/ToolCard.astro';
-import { SITE } from '../lib/site';
+import { SITE, canonicalPath, canonicalUrl } from '../lib/site';
 import { CATEGORIES } from '../lib/categories';
 import { sortTools, countByCategory } from '../lib/tools';
 
@@ -19,14 +19,14 @@ const jsonLd = [
     '@type': 'WebSite',
     name: SITE.name,
     alternateName: SITE.title,
-    url: SITE.url,
+    url: canonicalUrl(),
     description: SITE.description,
   },
   {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE.name,
-    url: SITE.url,
+    url: canonicalUrl(),
     sameAs: [SITE.social.github],
   },
 ];
@@ -39,14 +39,14 @@ const jsonLd = [
       <h1>The <span class="grad">Local-First &amp; Self-Hosted</span> Stack Index</h1>
       <p class="lead">A curated, no-nonsense directory of software that keeps your data on your own devices and servers — not someone else's cloud.</p>
 
-      <form class="search" action="/tools" method="get" role="search" style="margin-top:1.75rem">
+      <form class="search" action="/tools/" method="get" role="search" style="margin-top:1.75rem">
         <span class="search-ico" aria-hidden="true">⌕</span>
         <input type="search" name="q" placeholder="Search {tools.length} tools — notes, photos, passwords, backups…" aria-label="Search tools" />
       </form>
 
       <div class="cta-row">
-        <a class="btn btn-primary" href="/tools">Browse all tools →</a>
-        <a class="btn btn-ghost" href="/categories">Explore categories</a>
+        <a class="btn btn-primary" href="/tools/">Browse all tools →</a>
+        <a class="btn btn-ghost" href="/categories/">Explore categories</a>
       </div>
 
       <div class="stats">
@@ -72,7 +72,7 @@ const jsonLd = [
     <h2 style="margin-bottom:1.25rem">Categories</h2>
     <div class="grid cols-cat">
       {cats.map((c) => (
-        <a class="cat-card" href={`/categories/${c.slug}`}>
+        <a class="cat-card" href={canonicalPath(`/categories/${c.slug}`)}>
           <span class="ico" aria-hidden="true">{c.icon}</span>
           <h3>{c.name}</h3>
           <p class="muted" style="font-size:.88rem">{c.blurb}</p>
@@ -88,7 +88,7 @@ const jsonLd = [
         <p class="eyebrow">Fresh</p>
         <h2>Recently added</h2>
       </div>
-      <a class="btn btn-ghost" href="/tools">See all →</a>
+      <a class="btn btn-ghost" href="/tools/">See all →</a>
     </div>
     <div class="grid cols-3" style="margin-top:1.25rem">
       {latest.map((entry) => <ToolCard entry={entry} />)}

@@ -8,12 +8,7 @@ import sitemap from '@astrojs/sitemap';
 // rebuild when the real domain is live.
 export default defineConfig({
   site: 'https://localfirststack.com',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
   build: { format: 'directory' },
-  integrations: [
-    sitemap({
-      changefreq: 'weekly',
-      lastmod: new Date(),
-    }),
-  ],
+  integrations: [sitemap()],
 });

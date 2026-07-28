@@ -14,10 +14,19 @@ export const SITE = {
   },
 } as const;
 
+export function canonicalPath(pathname: string): string {
+  const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  return path === '/' ? '/' : `${path.replace(/\/+$/, '')}/`;
+}
+
+export function canonicalUrl(pathname = '/'): string {
+  return new URL(canonicalPath(pathname), SITE.url).href;
+}
+
 export const NAV = [
-  { href: '/tools', label: 'All tools' },
-  { href: '/categories', label: 'Categories' },
-  { href: '/alternatives', label: 'Alternatives' },
-  { href: '/about', label: 'About' },
-  { href: '/submit', label: 'Submit' },
+  { href: '/tools/', label: 'All tools' },
+  { href: '/categories/', label: 'Categories' },
+  { href: '/alternatives/', label: 'Alternatives' },
+  { href: '/about/', label: 'About' },
+  { href: '/submit/', label: 'Submit' },
 ] as const;

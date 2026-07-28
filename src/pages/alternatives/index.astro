@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalPath, canonicalUrl } from '../../lib/site';
 import { buildAlternatives } from '../../lib/alternatives';
 
 const groups = buildAlternatives(await getCollection('tools'));
@@ -12,7 +12,7 @@ const jsonLd = {
   '@type': 'CollectionPage',
   name: `Alternatives · ${SITE.name}`,
   description,
-  url: `${SITE.url}/alternatives`,
+  url: canonicalUrl('/alternatives'),
 };
 ---
 
@@ -27,7 +27,7 @@ const jsonLd = {
 
     <div class="grid cols-cat" style="margin-top:1.75rem">
       {groups.map((g) => (
-        <a class="cat-card" href={`/alternatives/${g.slug}`}>
+        <a class="cat-card" href={canonicalPath(`/alternatives/${g.slug}`)}>
           <h3>Alternatives to {g.name}</h3>
           <span class="count">{g.tools.length} {g.tools.length === 1 ? 'tool' : 'tools'}</span>
         </a>

@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
-import { SITE } from '../lib/site';
+import { SITE, canonicalPath } from '../lib/site';
 
 export async function GET(context: APIContext) {
   const tools = await getCollection('tools');
@@ -10,7 +10,7 @@ export async function GET(context: APIContext) {
     .map((t) => ({
       title: t.data.name,
       description: t.data.description,
-      link: `/tools/${t.id}`,
+      link: canonicalPath(`/tools/${t.id}`),
       pubDate: t.data.added,
       categories: [t.data.category, ...t.data.tags],
     }));

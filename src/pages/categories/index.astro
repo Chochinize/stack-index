@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { SITE } from '../../lib/site';
+import { SITE, canonicalPath, canonicalUrl } from '../../lib/site';
 import { CATEGORIES } from '../../lib/categories';
 import { countByCategory } from '../../lib/tools';
 
@@ -14,7 +14,7 @@ const jsonLd = {
   '@type': 'CollectionPage',
   name: `Categories · ${SITE.name}`,
   description,
-  url: `${SITE.url}/categories`,
+  url: canonicalUrl('/categories'),
 };
 ---
 
@@ -26,7 +26,7 @@ const jsonLd = {
 
     <div class="grid cols-cat" style="margin-top:1.75rem">
       {cats.map((c) => (
-        <a class="cat-card" href={`/categories/${c.slug}`}>
+        <a class="cat-card" href={canonicalPath(`/categories/${c.slug}`)}>
           <span class="ico" aria-hidden="true">{c.icon}</span>
           <h3>{c.name}</h3>
           <p class="muted" style="font-size:.88rem">{c.blurb}</p>
