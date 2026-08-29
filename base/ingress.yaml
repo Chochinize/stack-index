@@ -7,7 +7,11 @@ metadata:
     # TLS via cert-manager DNS-01 (same issuer the other sites use). Requires the
     # Cloudflare API token to have access to the localfirststack.com zone.
     cert-manager.io/cluster-issuer: letsencrypt-dns01
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Must stay "false": Cloudflare terminates TLS at the edge and the tunnel
+    # reaches ingress-nginx over plain HTTP. With use-forwarded-headers off in
+    # the controller ConfigMap, ssl-redirect: "true" 308s every request back to
+    # itself -> ERR_TOO_MANY_REDIRECTS. Public HTTPS is enforced by Cloudflare.
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/preserve-trailing-slash: "true"
 spec:
   ingressClassName: nginx
