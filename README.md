@@ -45,4 +45,4 @@ both in sync if the production domain ever changes.
 
 ## License
 
-No license file yet — until one's added, all rights are reserved by default.
+[MIT](LICENSE)

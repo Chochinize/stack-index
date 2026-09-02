@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "The Local-First & Self-Hosted Stack Index — a curated directory of local-first and self-hosted software.",
   "scripts": {
     "dev": "astro dev",
