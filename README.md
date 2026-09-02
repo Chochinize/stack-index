@@ -1,6 +1,10 @@
 # The Stack Index
 
-**The Local-First & Self-Hosted Stack Index** — a curated directory of software that keeps your data on your own devices and servers. Built with [Astro](https://astro.build), deployed to k3s via GitOps.
+**The Local-First & Self-Hosted Stack Index** — a curated directory of software that keeps your data on your own devices and servers. Browse by category, license, platform, and the SaaS it replaces.
+
+🔗 **[localfirststack.com](https://localfirststack.com)**
+
+Built with [Astro](https://astro.build) — no server-rendered pages, no client-side framework, no third-party fonts or trackers. Deployed to k3s via GitOps (see [Deploy](#deploy-gitops) below).
 
 ## Develop
 
@@ -36,5 +40,9 @@ Push to `main` → GitHub Actions (`.github/workflows/build.yml`) builds and pus
 `base/kustomization.yaml`. **ArgoCD** (`argo-app.yaml`) auto-syncs the `base/`
 kustomization into the `stack-index` namespace on k3s.
 
-The canonical URL lives in `astro.config.mjs` (`site`) and `src/lib/site.ts` — update
-both when the production domain is attached.
+The canonical URL lives in `astro.config.mjs` (`site`) and `src/lib/site.ts` — keep
+both in sync if the production domain ever changes.
+
+## License
+
+No license file yet — until one's added, all rights are reserved by default.

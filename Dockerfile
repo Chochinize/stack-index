@@ -10,7 +10,7 @@ RUN npm run build
 
 # ---- runtime stage: serve the static output with nginx ----
 FROM nginx:1.27-alpine AS runtime
-# Patch base-image OS packages to clear fixable CVEs (added by infra-audit shift-left)
+# Patch base-image OS packages to clear fixable CVEs
 RUN apk upgrade --no-cache
 # Drop the default server config and add ours.
 RUN rm /etc/nginx/conf.d/default.conf
