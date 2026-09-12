@@ -85,6 +85,14 @@ export const CATEGORIES: Category[] = [
     icon: '💰',
   },
   {
+    slug: 'business-commerce',
+    name: 'Business & Commerce',
+    blurb: 'Local-first and self-hosted software for running a business.',
+    intro:
+      'Run the business without making the cloud a single point of failure. These local-first and self-hosted commerce tools keep sales, inventory, customers, and operational data on devices and servers you control.',
+    icon: '🧾',
+  },
+  {
     slug: 'infra-devops',
     name: 'Self-Hosting Infrastructure',
     blurb: 'The infra that powers a self-hosted stack.',
